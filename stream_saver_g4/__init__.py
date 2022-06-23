@@ -68,5 +68,5 @@ class StreamSaver:
 
     def __str__(self):
         """Overrides the default implementation"""
-        return '%s => %s (%d)' % (self.streamURL, self.outputTemplate, self.segmentTime)
+        return '%s => %s (%s)' % (self.streamURL, self.outputTemplate, self.segmentTime)
 
