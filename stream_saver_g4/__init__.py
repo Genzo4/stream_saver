@@ -1,3 +1,6 @@
+import ffmpeg
+
+
 class StreamSaver:
 
     def __init__(self,
@@ -13,6 +16,32 @@ class StreamSaver:
         self.outputTemplate = outputTemplate
         self.segmentTime = segmentTime
 
+    def run(self) -> None:
+        """
+        Start stream saving
+        :return: None
+        """
+        self.__stream = ffmpeg.input(
+            self.streamURL
+        ).output(
+            self.outputTemplate,
+            vcodec='copy',
+            acodec='copy',
+            reset_timestamps=1,
+            strftime=1,
+            f='segment',
+            segment_time=self.segmentTime,
+            segment_atclocktime=1
+        ).overwrite_output(
+        ).run_async()
+
+    def stop(self) -> None:
+        """
+        Stop stream
+        :return: None
+        """
+        self.__stream.terminate()
+
     @property
     def streamURL(self):
         return self.__streamURL
@@ -26,7 +55,7 @@ class StreamSaver:
         return self.__outputTemplate
 
     @outputTemplate.setter
-    def streamURL(self, outputTemplate: str):
+    def outputTemplate(self, outputTemplate: str):
         self.__outputTemplate = outputTemplate
 
     @property
