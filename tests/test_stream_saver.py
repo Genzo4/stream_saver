@@ -1,5 +1,30 @@
+"""
+For tests install:
+ - rtsp-simple-server (https://github.com/aler9/rtsp-simple-server)
+ - ffmpeg (https://ffmpeg.org)
+
+and add it to PATH
+"""
+
 import pytest
 from stream_saver_g4 import StreamSaver
+from subprocess import Popen
+import time
+import os
+import glob
+
+
+def _removeTempFiles() -> None:
+    """
+    Remove temp files
+    :rtype: None
+    :return: None
+    """
+
+    removeFiles = glob.iglob('tests/output/*.ts')
+
+    for _file in removeFiles:
+        os.remove(_file)
 
 
 def test_defaults():
@@ -37,3 +62,30 @@ def test_print(capsys):
 
     captured = capsys.readouterr()
     assert captured.out == 'rtsp://user:pass@localhost:4321 => %H-%M-%S.ts (12:34:56)\n'
+
+
+def test_save():
+    _removeTempFiles()
+
+    rtspSrv = Popen(['rtsp-simple-server', 'tests/rtsp-simple-server.yml'])
+
+    time.sleep(5)
+
+    ffmpegStream = Popen(['ffmpeg', '-re', '-stream_loop', '-1', '-i', 'tests/test.mp4', '-c', 'copy', '-f', 'rtsp',
+                          'rtsp://localhost:8554/mystream'])
+
+    time.sleep(5)
+
+    stream = StreamSaver(streamURL='rtsp://localhost:8554/mystream',
+                         outputTemplate='tests/output/out_%H-%M-%S.ts',
+                         segmentTime='00:00:05'
+                         )
+    stream.run()
+
+    time.sleep(20)
+
+    stream.stop()
+    ffmpegStream.terminate()
+    rtspSrv.terminate()
+
+    # _removeTempFiles()
