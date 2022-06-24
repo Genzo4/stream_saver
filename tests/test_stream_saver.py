@@ -28,3 +28,12 @@ def test_setVars_2():
     assert stream.segmentTime == '12:34:56'
 
 
+def test_print(capsys):
+    stream = StreamSaver(streamURL='rtsp://user:pass@localhost:4321',
+                         outputTemplate='%H-%M-%S.ts',
+                         segmentTime='12:34:56'
+                         )
+    print(stream)
+
+    captured = capsys.readouterr()
+    assert captured.out == 'rtsp://user:pass@localhost:4321 => %H-%M-%S.ts (12:34:56)\n'
