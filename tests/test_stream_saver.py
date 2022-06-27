@@ -12,6 +12,7 @@ from subprocess import Popen
 import time
 import os
 import glob
+import ffmpeg
 
 
 def _removeTempFiles() -> None:
@@ -88,4 +89,18 @@ def test_save():
     ffmpegStream.terminate()
     rtspSrv.terminate()
 
-    # _removeTempFiles()
+    tsFiles = glob.iglob('tests/output/*.ts')
+
+    i = 0
+    for _file in tsFiles:
+        if i <= 3:
+            info = ffmpeg.probe(_file)
+            for videoStream in info['streams']:
+                if videoStream['index'] == 0:
+                    assert videoStream['codec_name'] == 'h264'
+                    break
+        i += 1
+
+    assert i >= 4
+
+    _removeTempFiles()
