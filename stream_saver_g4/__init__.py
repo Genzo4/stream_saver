@@ -10,6 +10,7 @@ class StreamSaver:
         """
         :param streamURL: Stream URL
         :param outputTemplate: Output template
+        :param segmentTime: Segment length
         """
 
         self.streamURL = streamURL
