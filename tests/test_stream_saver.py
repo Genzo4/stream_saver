@@ -13,6 +13,7 @@ import time
 import os
 import glob
 import ffmpeg
+from utilspy_g4 import templatedRemoveFiles
 
 
 def _removeTempFiles() -> None:
@@ -22,10 +23,7 @@ def _removeTempFiles() -> None:
     :return: None
     """
 
-    removeFiles = glob.iglob('tests/output/*.ts')
-
-    for _file in removeFiles:
-        os.remove(_file)
+    templatedRemoveFiles('tests/output/*.ts')
 
 
 def test_defaults():
