@@ -41,18 +41,18 @@ from stream_saver_g4 import StreamSaver
 
 - ### Create instance:
 Create an instance of the StreamSaver. You can specify additional options:
-- streamURL - Stream URL.
+- stream_URL - Stream URL.
   Default value: ''
-- outputTemplate - Output template.
+- output_template - Output template.
   Default value: 'output_%Y-%m-%d_%H-%M-%S.ts'
-- segmentTime - Segment length.
+- segment_time - Segment length.
   Default value: '01:00:00'
 
 
 ```python
-stream = StreamSaver(streamURL='rtsp://cam_1.local:554/live1.sdp',
-                     outputTemplate='output_%H-%M-%S.ts',
-                     segmentTime='00:30:00'
+stream = StreamSaver(stream_URL='rtsp://cam_1.local:554/live1.sdp',
+                     output_template='output_%H-%M-%S.ts',
+                     segment_time='00:30:00'
                      )
 ```
 
@@ -115,17 +115,17 @@ from stream_saver_g4 import StreamSaver
 
 - ### Создаём экземпляр
 Создаём экземпляр StreamSaver. Можно указать дополнительные параметры:
-- streamURL - адрес потока.
+- stream_URL - адрес потока.
   Значение по умолчанию: ''
-- outputTemplate - шаблон выходных файлов.
+- output_template - шаблон выходных файлов.
   Значение по умолчанию: 'output_%Y-%m-%d_%H-%M-%S.ts'
-- segmentTime - длина одного сегмента.
+- segment_time - длина одного сегмента.
   Значение по умолчанию: '01:00:00'
 
 ```python
-stream = StreamSaver(streamURL='rtsp://cam_1.local:554/live1.sdp',
-                     outputTemplate='output_%H-%M-%S.ts',
-                     segmentTime='00:30:00'
+stream = StreamSaver(stream_URL='rtsp://cam_1.local:554/live1.sdp',
+                     output_template='output_%H-%M-%S.ts',
+                     segment_time='00:30:00'
                      )
 ```
 

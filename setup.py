@@ -8,7 +8,7 @@ with open(path.join(top_level_directory, 'README.md'), encoding='utf-8') as file
 
 setup(
    name='stream_saver_g4',
-   version='1.0.0',
+   version='1.1.0',
    description='Save stream to disk',
    long_description=long_description,
    long_description_content_type='text/markdown',

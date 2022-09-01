@@ -10,52 +10,51 @@ import pytest
 from stream_saver_g4 import StreamSaver
 from subprocess import Popen
 import time
-import os
 import glob
 import ffmpeg
-from utilspy_g4 import templatedRemoveFiles
+from utilspy_g4 import templated_remove_files
 
 
-def _removeTempFiles() -> None:
+def _remove_temp_files() -> None:
     """
     Remove temp files
     :rtype: None
     :return: None
     """
 
-    templatedRemoveFiles('tests/output/*.ts')
+    templated_remove_files('tests/output/*.ts')
 
 
 def test_defaults():
     stream = StreamSaver()
 
-    assert stream.streamURL == ''
-    assert stream.outputTemplate == 'output_%Y-%m-%d_%H-%M-%S.ts'
-    assert stream.segmentTime == '01:00:00'
+    assert stream.stream_URL == ''
+    assert stream.output_template == 'output_%Y-%m-%d_%H-%M-%S.ts'
+    assert stream.segment_time == '01:00:00'
 
 
-def test_setVars_1():
+def test_set_vars_1():
     stream = StreamSaver('rtsp://localhost:12345', '%H-%M-%S.ts', '00:10:00')
 
-    assert stream.streamURL == 'rtsp://localhost:12345'
-    assert stream.outputTemplate == '%H-%M-%S.ts'
-    assert stream.segmentTime == '00:10:00'
+    assert stream.stream_URL == 'rtsp://localhost:12345'
+    assert stream.output_template == '%H-%M-%S.ts'
+    assert stream.segment_time == '00:10:00'
 
 
-def test_setVars_2():
-    stream = StreamSaver(outputTemplate='out.ts',
-                         segmentTime='12:34:56',
-                         streamURL='rtsp://user:pass@localhost:4321')
+def test_set_vars_2():
+    stream = StreamSaver(output_template='out.ts',
+                         segment_time='12:34:56',
+                         stream_URL='rtsp://user:pass@localhost:4321')
 
-    assert stream.streamURL == 'rtsp://user:pass@localhost:4321'
-    assert stream.outputTemplate == 'out.ts'
-    assert stream.segmentTime == '12:34:56'
+    assert stream.stream_URL == 'rtsp://user:pass@localhost:4321'
+    assert stream.output_template == 'out.ts'
+    assert stream.segment_time == '12:34:56'
 
 
 def test_print(capsys):
-    stream = StreamSaver(streamURL='rtsp://user:pass@localhost:4321',
-                         outputTemplate='%H-%M-%S.ts',
-                         segmentTime='12:34:56'
+    stream = StreamSaver(stream_URL='rtsp://user:pass@localhost:4321',
+                         output_template='%H-%M-%S.ts',
+                         segment_time='12:34:56'
                          )
     print(stream)
 
@@ -64,41 +63,41 @@ def test_print(capsys):
 
 
 def test_save():
-    _removeTempFiles()
+    _remove_temp_files()
 
-    rtspSrv = Popen(['rtsp-simple-server', 'tests/rtsp-simple-server.yml'])
-
-    time.sleep(5)
-
-    ffmpegStream = Popen(['ffmpeg', '-re', '-stream_loop', '-1', '-i', 'tests/test.mp4', '-c', 'copy', '-f', 'rtsp',
-                          'rtsp://localhost:8554/mystream'])
+    rtsp_srv = Popen(['rtsp-simple-server', 'tests/rtsp-simple-server.yml'])
 
     time.sleep(5)
 
-    stream = StreamSaver(streamURL='rtsp://localhost:8554/mystream',
-                         outputTemplate='tests/output/out_%H-%M-%S.ts',
-                         segmentTime='00:00:05'
+    ffmpeg_stream = Popen(['ffmpeg', '-re', '-stream_loop', '-1', '-i', 'tests/test.mp4', '-c', 'copy', '-f', 'rtsp',
+                           'rtsp://localhost:8554/mystream'])
+
+    time.sleep(5)
+
+    stream = StreamSaver(stream_URL='rtsp://localhost:8554/mystream',
+                         output_template='tests/output/out_%H-%M-%S.ts',
+                         segment_time='00:00:05'
                          )
     stream.run()
 
     time.sleep(20)
 
     stream.stop()
-    ffmpegStream.terminate()
-    rtspSrv.terminate()
+    ffmpeg_stream.terminate()
+    rtsp_srv.terminate()
 
-    tsFiles = glob.iglob('tests/output/*.ts')
+    ts_files = glob.iglob('tests/output/*.ts')
 
     i = 0
-    for _file in tsFiles:
+    for file in ts_files:
         if i <= 3:
-            info = ffmpeg.probe(_file)
-            for videoStream in info['streams']:
-                if videoStream['index'] == 0:
-                    assert videoStream['codec_name'] == 'h264'
+            info = ffmpeg.probe(file)
+            for video_stream in info['streams']:
+                if video_stream['index'] == 0:
+                    assert video_stream['codec_name'] == 'h264'
                     break
         i += 1
 
     assert i >= 4
 
-    _removeTempFiles()
+    _remove_temp_files()
